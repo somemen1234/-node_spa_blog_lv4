@@ -35,7 +35,7 @@ router.get("/posts", async (_, res) => {
   try {
     //방법 1 : posts 테이블에 likes 어트리뷰트를 추가해서 출력
     const posts = await Post.findAll({
-      attributes: ["post_id", "user_id", "name", "title", "likes", "createdAt"],
+      attributes: ["post_id", "name", "title", "likes", "createdAt"],
     });
     if (!posts.length) return res.status(404).json({ errorMessage: "작성된 게시글이 없습니다." });
     posts.sort((a, b) => b.likes - a.likes || b.createdAt - a.createdAt);
@@ -75,7 +75,7 @@ router.get("/posts/:post_id", async (req, res) => {
   try {
     const { post_id } = req.params;
     const post = await Post.findOne({
-      attributes: ["post_id", "user_id", "name", "title", "content", "likes", "createdAt"],
+      attributes: ["post_id", "name", "title", "content", "likes", "createdAt"],
       where: { post_id },
     });
 
@@ -89,7 +89,7 @@ router.get("/posts/:post_id", async (req, res) => {
 });
 
 //게시글 수정 API
-router.put("/posts/:post_id", authMiddleware, async (req, res) => {
+router.patch("/posts/:post_id", authMiddleware, async (req, res) => {
   try {
     const { post_id } = req.params;
     const { user_id } = res.locals.user;
@@ -102,17 +102,15 @@ router.put("/posts/:post_id", authMiddleware, async (req, res) => {
     if (user_id !== existPost.user_id)
       return res.status(401).json({ errorMessage: "게시글 수정 권한이 존재하지 않습니다." });
 
-    if (!title || !content)
+    if (!title && !content)
       return res
         .status(400)
-        .json({ errorMessage: "게시글 제목이나 내용이 빈 내용인지 확인해 주세요" });
+        .json({ errorMessage: "게시글과 내용이 둘 다 빈 내용인지 확인해 주세요." });
 
     await Post.update(
       { title, content }, // 수정할 컬럼 및 데이터
       {
-        where: {
-          [Op.and]: [{ post_id }, { user_id: existPost.user_id }], //두 개의 조건이 만족이 되면 수정한다.
-        },
+        where: { user_id: existPost.user_id },
       } //어떤 데이터를 수정할지
     );
 
@@ -138,9 +136,7 @@ router.delete("/posts/:post_id", authMiddleware, async (req, res) => {
       return res.status(401).json({ errorMessage: "게시글 삭제 권한이 존재하지 않습니다." });
 
     await Post.destroy({
-      where: {
-        [Op.and]: [{ post_id }, { user_id: existPost.user_id }],
-      },
+      where: { user_id: existPost.user_id },
     });
     return res.status(200).json({ message: "게시글을 삭제하였습니다." });
   } catch (error) {
@@ -226,7 +222,7 @@ router.get("/loginUser/likePosts", authMiddleware, async (req, res) => {
       include: [
         {
           model: Post,
-          attributes: ["post_id", "user_id", "title", "name", "createdAt", "likes"],
+          attributes: ["post_id", "title", "name", "likes", "createdAt"],
         },
       ],
     });

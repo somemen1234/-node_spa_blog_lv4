@@ -130,17 +130,10 @@ router.post("/users/login", async (req, res) => {
 //로그아웃 API
 // 로그아웃 API
 // 해당 유저의 토큰 값이 있는지 비교해서 있으면 삭제하고 없으면 로그인이 되어 있지 않다고 출력
-router.delete("/logout/:user_id", authMiddleware, async (req, res) => {
+router.delete("/logout", authMiddleware, async (req, res) => {
   try {
-    const { user_id } = req.params;
+    const { user_id } = res.locals.user;
     const user = await User.findOne({ where: { user_id } });
-    const existToken = await Token.findOne({ where: { user_id: user_id } });
-
-    if (!existToken) {
-      return res.status(401).json({
-        errorMessage: "로그인이 되어 있지 않은 아이디입니다.",
-      });
-    }
 
     await Token.destroy({ where: { user_id: user_id } });
     res.clearCookie("accessToken");

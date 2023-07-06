@@ -51,7 +51,7 @@ router.get("/posts/:post_id/comments", async (req, res) => {
       return res.status(404).json({ errorMessage: "게시글이 없습니다." });
     }
     const comments = await Comment.findAll({
-      attributes: ["comment_id", "post_id", "user_id", "name", "comment", "createdAt"],
+      attributes: ["comment_id", "name", "comment", "createdAt"],
       order: [["createdAt", "DESC"]],
       where: { post_id: post_id },
     });
