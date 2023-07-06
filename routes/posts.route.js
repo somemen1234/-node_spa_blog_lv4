@@ -228,6 +228,7 @@ router.get("/loginUser/likePosts", authMiddleware, async (req, res) => {
     });
     if (!userLikes)
       return res.status(404).json({ errorMessage: "좋아요를 누른 게시글이 없습니다." });
+
     userLikes.sort((a, b) => b.Post.likes - a.Post.likes || b.Post.createdAt - a.Post.createdAt);
 
     //방법 2 : posts에 likes를 넣지 않고 구현(비효율적인거 같아서 1번 방법으로 변경했음)
