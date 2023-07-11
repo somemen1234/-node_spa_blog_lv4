@@ -7,7 +7,7 @@ const db = require("./models");
 const app = express();
 const PORT = 3018;
 
-db.sequelize.sync({});
+db.sequelize.sync({}); // 개발 시에만 사용(서비스 시 들어가지 않도록 유의!)
 app.use(express.json());
 app.use(cookieParser());
 app.use("/", [usersRouter, postsRouter, commentsRouter]);

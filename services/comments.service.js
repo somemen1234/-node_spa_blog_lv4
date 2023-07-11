@@ -5,6 +5,7 @@ class CommentService {
   commentRepository = new CommentRepository();
   postRepository = new PostRepository();
 
+  //게시글의 댓글 조회
   findComments = async (post_id) => {
     try {
       const existPost = await this.postRepository.findOnePost(post_id);
@@ -20,6 +21,7 @@ class CommentService {
     }
   };
 
+  //게시글의 댓글 생성
   createComment = async (post_id, comment, res) => {
     const { user_id } = res.locals.user;
     const name = res.locals.userName;
@@ -38,6 +40,7 @@ class CommentService {
     }
   };
 
+  //게시글의 댓글 수정
   putComment = async (post_id, comment_id, comment, res) => {
     const { user_id } = res.locals.user;
 
@@ -62,6 +65,7 @@ class CommentService {
     }
   };
 
+  //게시글의 댓글 삭제
   deleteComment = async (post_id, comment_id, res) => {
     const { user_id } = res.locals.user;
 

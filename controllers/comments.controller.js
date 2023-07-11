@@ -3,7 +3,8 @@ const CommentService = require("../services/comments.service.js");
 class CommentsController {
   commentService = new CommentService();
 
-  getComments = async (req, res, next) => {
+  //댓글 조회
+  getComments = async (req, res) => {
     const { post_id } = req.params;
     const result = await this.commentService.findComments(post_id);
 
@@ -11,7 +12,8 @@ class CommentsController {
     else res.status(200).json({ data: result });
   };
 
-  createComment = async (req, res, next) => {
+  //댓글 생성
+  createComment = async (req, res) => {
     const { post_id } = req.params;
     const { comment } = req.body;
 
@@ -21,7 +23,8 @@ class CommentsController {
     else res.status(200).json({ message: "댓글을 생성하였습니다." });
   };
 
-  putComment = async (req, res, next) => {
+  //댓글 수정
+  putComment = async (req, res) => {
     const { post_id, comment_id } = req.params;
     const { comment } = req.body;
     const result = await this.commentService.putComment(post_id, comment_id, comment, res);
@@ -30,7 +33,8 @@ class CommentsController {
     else res.status(200).json({ message: "댓글을 수정하였습니다." });
   };
 
-  deleteComment = async (req, res, next) => {
+  //댓글 삭제
+  deleteComment = async (req, res) => {
     const { post_id, comment_id } = req.params;
 
     const result = await this.commentService.deleteComment(post_id, comment_id, res);

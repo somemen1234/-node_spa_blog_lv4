@@ -3,6 +3,7 @@ const UserService = require("../services/users.service.js");
 class UsersController {
   userService = new UserService();
 
+  //회원가입
   signup = async (req, res, next) => {
     const { email, name, password, confirmPassword } = req.body;
     const result = await this.userService.signup(email, name, password, confirmPassword);
@@ -11,6 +12,7 @@ class UsersController {
     else res.status(201).json({ message: "회원 가입에 성공하였습니다." });
   };
 
+  //로그인
   login = async (req, res, next) => {
     const { email, password } = req.body;
     const result = await this.userService.login(email, password, res);
@@ -19,6 +21,7 @@ class UsersController {
     else res.status(200).json({ message: `${result}님 환영합니다.` });
   };
 
+  //로그아웃
   logout = async (_, res, next) => {
     const result = await this.userService.logout(res);
 
@@ -26,6 +29,7 @@ class UsersController {
     else res.status(200).json({ message: `${result}님이 로그아웃 되었습니다.` });
   };
 
+  //사용자 계정 전환
   switchId = async (req, res, next) => {
     const { user_id } = req.params;
 

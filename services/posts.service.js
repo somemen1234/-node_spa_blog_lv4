@@ -10,11 +10,12 @@ class PostService {
   likeRepository = new LikeRepository();
   userRepository = new UserRepository();
 
+  //전체 게시글 조회
   findAllPost = async () => {
     try {
       const posts = await this.postRepository.findAllPost();
 
-      if (!posts.length) return { code: 404, errorMessage: "작성된 게시글이 없습니다." };
+      if (!posts.length) return [];
       return posts;
     } catch (error) {
       console.error(error);
@@ -22,6 +23,7 @@ class PostService {
     }
   };
 
+  //게시글 생성
   createPost = async (title, content, res) => {
     try {
       const { user_id } = res.locals.user;
@@ -39,6 +41,7 @@ class PostService {
     }
   };
 
+  //상세 게시글 조회
   findOnePost = async (post_id) => {
     try {
       const existPost = await this.postRepository.findOnePost(post_id);
@@ -51,6 +54,7 @@ class PostService {
     }
   };
 
+  //게시글 수정
   patchPost = async (post_id, title, content, res) => {
     try {
       const { user_id } = res.locals.user;
@@ -73,6 +77,7 @@ class PostService {
     }
   };
 
+  //게시글 삭제
   deletePost = async (post_id, res) => {
     try {
       const { user_id } = res.locals.user;
@@ -93,6 +98,7 @@ class PostService {
     }
   };
 
+  //게시글 좋아요 누르기
   likePost = async (post_id, res) => {
     try {
       const { user_id } = res.locals.user; // 현재 로그인한 사용자의 ID
@@ -132,6 +138,7 @@ class PostService {
     }
   };
 
+  //로그인된 사용자가 좋아요 누른 게시글 조회
   getLikePosts = async (res) => {
     const { user_id } = res.locals.user;
 
