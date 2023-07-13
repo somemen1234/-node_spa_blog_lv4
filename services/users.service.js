@@ -12,29 +12,8 @@ class UserService {
   tokenRepository = new TokenRepository();
 
   //회원가입
-  signup = async (email, name, password, confirmPassword) => {
+  signup = async (email, name, password) => {
     try {
-      const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
-
-      if (!email || !name || !password || !confirmPassword)
-        return {
-          code: 400,
-          errorMessage: "이메일, 이름, 비밀번호, 비밀번호 확인을 전부 입력해주세요.",
-        };
-
-      if (!emailReg.test(email))
-        return { code: 400, errorMessage: "이메일 형식이 올바르지 않습니다. 다시 입력해 주세요." };
-
-      const emailName = email.split("@")[0];
-      if (password.length < 4 || emailName.includes(password))
-        return {
-          code: 400,
-          errorMessage: "패스워드는 4자리이상이고 이메일과 같은 값이 포함이 되면 안됩니다.",
-        };
-
-      if (password !== confirmPassword)
-        return { code: 412, errorMessage: "패스워드와 패스워드확인이 다릅니다." };
-
       const existUser = await this.userRepository.existUserMail(email);
       if (existUser) return { code: 409, errorMessage: "이미 존재하는 이메일입니다." };
 
@@ -51,9 +30,6 @@ class UserService {
   //로그인
   login = async (email, password, res) => {
     try {
-      if (!email || !password)
-        return { code: 400, errorMessage: "이메일 또는 패스워드를 입력해주세요." };
-
       const user = await this.userRepository.existUserMail(email);
       if (!user)
         return { code: 412, errorMessage: "회원가입되지 않은 이메일이거나 비밀번호가 다릅니다." };

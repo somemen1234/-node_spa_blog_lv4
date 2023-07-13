@@ -29,8 +29,6 @@ class CommentService {
       const existPost = await this.postRepository.findOnePost(post_id);
       if (!existPost) return { code: 404, errorMessage: "게시글이 없습니다." };
 
-      if (!comment) return { code: 400, errorMessage: "댓글 정보가 입력되지 않았습니다." };
-
       await this.commentRepository.createComment(user_id, post_id, name, comment);
 
       return true;
@@ -50,8 +48,6 @@ class CommentService {
 
       const existComment = await this.commentRepository.findOneComment(comment_id);
       if (!existComment) return { code: 404, errorMessage: "해당 댓글이 없습니다." };
-
-      if (!comment) return { code: 400, errorMessage: "댓글 정보가 입력되지 않았습니다." };
 
       if (user_id !== existComment.user_id)
         return { code: 401, errorMessage: "댓글 수정 권한이 존재하지 않습니다." };

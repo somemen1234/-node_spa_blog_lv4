@@ -16,6 +16,7 @@ class CommentsController {
   createComment = async (req, res) => {
     const { post_id } = req.params;
     const { comment } = req.body;
+    if (!comment) return res.status(400).json({ errorMessage: "댓글 정보가 입력되지 않았습니다." });
 
     const result = await this.commentService.createComment(post_id, comment, res);
 
@@ -27,6 +28,8 @@ class CommentsController {
   putComment = async (req, res) => {
     const { post_id, comment_id } = req.params;
     const { comment } = req.body;
+    if (!comment) return res.status(400).json({ errorMessage: "댓글 정보가 입력되지 않았습니다." });
+
     const result = await this.commentService.putComment(post_id, comment_id, comment, res);
 
     if (result.errorMessage) res.status(result.code).json({ errorMessage: result.errorMessage });

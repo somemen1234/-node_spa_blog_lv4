@@ -14,6 +14,9 @@ class PostsController {
   //게시글 생성
   createPost = async (req, res) => {
     const { title, content } = req.body;
+    if (!title || !content)
+      return res.status(400).json({ errorMessage: "게시글의 정보가 입력되지 않았습니다." });
+
     const result = await this.postService.createPost(title, content, res);
 
     if (result.errorMessage) res.status(result.code).json({ errorMessage: result.errorMessage });
@@ -33,6 +36,11 @@ class PostsController {
   patchPost = async (req, res) => {
     const { post_id } = req.params;
     const { title, content } = req.body;
+    if (!title && !content)
+      return res.status(400).json({
+        errorMessage: "게시글과 내용이 둘 다 빈 내용인지 확인해 주세요.",
+      });
+
     const result = await this.postService.patchPost(post_id, title, content, res);
 
     if (result.errorMessage) res.status(result.code).json({ errorMessage: result.errorMessage });

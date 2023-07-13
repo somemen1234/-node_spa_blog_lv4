@@ -29,9 +29,6 @@ class PostService {
       const { user_id } = res.locals.user;
       const name = res.locals.userName;
 
-      if (!title || !content)
-        return { code: 400, errorMessage: "게시글의 정보가 입력되지 않았습니다." };
-
       await this.postRepository.createPost(user_id, name, title, content);
 
       return true;
@@ -64,9 +61,6 @@ class PostService {
 
       if (user_id !== existPost.user_id)
         return { code: 401, errorMessage: "게시글 수정 권한이 존재하지 않습니다." };
-
-      if (!title && !content)
-        return { code: 400, errorMessage: "게시글과 내용이 둘 다 빈 내용인지 확인해 주세요." };
 
       await this.postRepository.updatePost(post_id, title, content);
 
