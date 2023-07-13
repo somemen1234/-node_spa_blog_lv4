@@ -2,7 +2,7 @@
 
 ### 회원가입과 로그인을 통한 내 블로그 백엔드 서버 구현(게시판)
 
-### Lv4 블로그 디벨롭(Layered Architecture Pattern으로 변경)
+### Lv4 블로그 디벨롭(3-Layered Architecture Pattern으로 변경)
 
 ---
 
