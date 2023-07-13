@@ -4,7 +4,7 @@ class UsersController {
   userService = new UserService();
 
   //회원가입
-  signup = async (req, res, next) => {
+  signup = async (req, res) => {
     const { email, name, password, confirmPassword } = req.body;
     const result = await this.userService.signup(email, name, password, confirmPassword);
 
@@ -13,7 +13,7 @@ class UsersController {
   };
 
   //로그인
-  login = async (req, res, next) => {
+  login = async (req, res) => {
     const { email, password } = req.body;
     const result = await this.userService.login(email, password, res);
 
@@ -22,7 +22,7 @@ class UsersController {
   };
 
   //로그아웃
-  logout = async (_, res, next) => {
+  logout = async (_, res) => {
     const result = await this.userService.logout(res);
 
     if (result.errorMessage) res.status(result.code).json({ errorMessage: result.errorMessage });
@@ -30,7 +30,7 @@ class UsersController {
   };
 
   //사용자 계정 전환
-  switchId = async (req, res, next) => {
+  switchId = async (req, res) => {
     const { user_id } = req.params;
 
     const result = await this.userService.switchId(user_id, res);

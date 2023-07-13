@@ -39,7 +39,6 @@ class UserService {
       if (existUser) return { code: 409, errorMessage: "이미 존재하는 이메일입니다." };
 
       const hashPassword = await bcrypt.hash(password, salt);
-
       await this.userRepository.signup(email, name, hashPassword);
 
       return true;
@@ -139,8 +138,7 @@ class UserService {
           errorMessage: "회원가입이 되어 있지 않은 아이디입니다. 회원가입 해주세요.",
         };
 
-      // 해당 유저의 refreshToken을 가져와 검증함
-      // 검증에 성공하면 해당 유저를 로그인 상태로 바꾸고 refreshToken을 삭제하고 재생성해서 제일 상단에 위치하게 함
+      // 해당 유저의 refreshToken 검증
       const existReFreshToken = await this.tokenRepository.findRefreshToken(user_id);
       if (!existReFreshToken)
         return { code: 404, errorMessage: "로그인이 되어 있지 않은 아이디입니다." };
@@ -155,7 +153,7 @@ class UserService {
 
       return existUser.name;
     } catch (error) {
-      // 토큰이 검증 실패했으면 만료된 아이디라는 오류 반환
+      // 토큰 검증 실패
       if (error.name === "TokenExpiredError") {
         console.log(error);
 
@@ -164,7 +162,6 @@ class UserService {
 
         return { code: 401, errorMessage: "토큰이 만료된 아이디입니다. 다시 로그인 해주세요." };
       }
-      // 토큰이 존재하지 않았을 경우에 여기로 들어가서 로그인 먼저 해달라는 오류 반환
       console.error(error);
       return { code: 500, errorMessage: "계정 전환에 실패했습니다. " };
     }

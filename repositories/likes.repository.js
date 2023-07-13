@@ -1,4 +1,5 @@
 const { Like, Post } = require("../models");
+const { Sequelize } = require("sequelize");
 
 class LikeRepository {
   //해당 게시글의 유저 좋아요 생성(좋아요 없을 시)
@@ -18,19 +19,27 @@ class LikeRepository {
   };
   //해당 유저가 좋아요 누른 게시글 목록 조회
   findUserLikePosts = async (user_id) => {
-    const posts = await Like.findAll({
-      where: { user_id },
-      groupBy: ["post_id"],
-      attributes: [],
+    const posts = await Post.findAll({
+      attributes: [
+        "post_id",
+        "name",
+        "title",
+        [
+          Sequelize.literal(`(SELECT COUNT(*) FROM likes WHERE likes.post_id = Post.post_id)`),
+          "likes",
+        ],
+        "createdAt",
+      ],
       include: [
         {
-          model: Post,
-          attributes: ["post_id", "title", "name", "likes", "createdAt"],
+          model: Like,
+          attributes: [],
+          where: { user_id },
         },
       ],
       order: [
-        [Post, "likes", "DESC"],
-        [Post, "createdAt", "DESC"],
+        [Sequelize.literal("likes"), "DESC"],
+        ["createdAt", "DESC"],
       ],
     });
     return posts;

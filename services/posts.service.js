@@ -1,5 +1,5 @@
 const { sequelize } = require("../models");
-const { Transaction } = require("sequelize");
+const { Transaction, Sequelize } = require("sequelize");
 
 const PostRepository = require("../repositories/posts.repository.js");
 const LikeRepository = require("../repositories/likes.repository.js");
@@ -14,8 +14,8 @@ class PostService {
   findAllPost = async () => {
     try {
       const posts = await this.postRepository.findAllPost();
-
       if (!posts.length) return [];
+
       return posts;
     } catch (error) {
       console.error(error);
@@ -110,27 +110,15 @@ class PostService {
 
       const existUserLike = await this.likeRepository.findExistUserLike(post_id, user_id);
 
-      const t = await sequelize.transaction({
-        isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-      });
-      try {
-        if (existUserLike) {
-          // 이미 좋아요를 눌렀다면 좋아요 취소
-          await this.likeRepository.deleteUserLike(post_id, user_id, { transaction: t }); // 좋아요 기록 삭제
-          await this.postRepository.minusLikePost(post_id, existPost.likes, { transaction: t });
-          await t.commit();
-          return "cancel";
-        } else {
-          // 좋아요 추가
-          await this.likeRepository.createUserLike(post_id, user_id, { transaction: t }); // 좋아요 기록 생성
-          await this.postRepository.plusLikePost(post_id, existPost.likes, { transaction: t });
-          await t.commit();
-          return "add";
-        }
-      } catch (transactionError) {
-        console.err(transactionError);
-        await t.rollback();
-        throw transactionError;
+      if (existUserLike) {
+        // 이미 좋아요를 눌렀다면 좋아요 취소
+        await this.likeRepository.deleteUserLike(post_id, user_id); // 좋아요 기록 삭제
+        return "cancel";
+      } else {
+        // 좋아요 추가
+        await this.likeRepository.createUserLike(post_id, user_id); // 좋아요 기록 생성
+
+        return "add";
       }
     } catch (error) {
       console.error(error);
